@@ -1,0 +1,12 @@
+aws_region          = "eu-west-2"
+anthropic_api_key   = "sk-ant-your-api-key-here"
+project_name        = "ai-support-automator"
+notification_email  = "your-email@example.com"
+
+# Demo settings (accelerated timers)
+sla_critical_minutes       = 5
+sla_high_minutes           = 15
+sla_medium_minutes         = 30
+sla_low_minutes            = 60
+firehose_buffer_seconds    = 60
+sla_check_interval_minutes = 5
