@@ -61,6 +61,7 @@ resource "aws_lambda_function" "ingest" {
   environment {
     variables = {
       KINESIS_STREAM_NAME = aws_kinesis_stream.tickets.name
+      DYNAMODB_TABLE      = aws_dynamodb_table.tickets.name
     }
   }
 }
