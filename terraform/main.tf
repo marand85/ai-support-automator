@@ -61,7 +61,7 @@ resource "aws_iam_role" "firehose_role" {
 
 resource "aws_iam_role_policy" "firehose_policy" {
   name = "${var.project_name}-firehose-policy"
-  role = aws_iam_role.firehose_role_id
+  role = aws_iam_role.firehose_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -252,7 +252,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "dynamodb:Scan"
         ]
         Resource = [
-          aws_dynamodb_table_tickets.arn,
+          aws_dynamodb_table.tickets.arn,
           "${aws_dynamodb_table.tickets.arn}/index/*"
         ]
       },
