@@ -45,23 +45,26 @@ output "demo_instructions" {
     === DEMO INSTRUCTIONS ===
 
     1. Submit a ticket:
-       curl -X POST ${aws_apigatewayv2_stage.stage.invoke_url}/tickets \
+       curl -X POST ${aws_apigatewayv2_stage.stage.invoke_url}tickets \
          -H "Content-Type: application/json" \
          -d '{"channel":"email","subject":"Payment system DOWN","body":"No customers can make payments since 10:00","customer":"acme-corp"}'
 
     2. Wait ~2-3 minutes for processing
 
     3. Check results:
-       curl ${aws_apigatewayv2_stage.stage.invoke_url}/tickets
-       curl ${aws_apigatewayv2_stage.stage.invoke_url}/tickets/stats
-       curl ${aws_apigatewayv2_stage.stage.invoke_url}/tickets/sla-breaches
+       curl ${aws_apigatewayv2_stage.stage.invoke_url}tickets
+       curl ${aws_apigatewayv2_stage.stage.invoke_url}tickets/stats
+       curl ${aws_apigatewayv2_stage.stage.invoke_url}tickets/sla-breaches
 
-    4. View CloudWatch dashboard:
-       ${aws_apigatewayv2_stage.stage.invoke_url}
+    4. Resolve a ticket:
+       curl -X PUT ${aws_apigatewayv2_stage.stage.invoke_url}tickets/TICKET_ID/resolve
 
-    5. Check your email for SNS notifications
+    5. View CloudWatch dashboard:
+       https://${var.aws_region}.console.aws.amazon.com/cloudwatch/home?region=${var.aws_region}#dashboards:name=${aws_cloudwatch_dashboard.main.dashboard_name}
 
-    6. IMPORTANT: Run 'terraform destroy' when done to avoid charges (Kinesis costs ~$0.36/day)
+    6. Check your email for SNS notifications
+
+    7. IMPORTANT: Run 'terraform destroy' when done to avoid charges (Kinesis costs ~$0.36/day)
 
   EOT
 }

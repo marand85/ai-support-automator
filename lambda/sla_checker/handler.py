@@ -60,7 +60,7 @@ def find_processed_breaches(table, now):
 
     result = table.scan(
         FilterExpression=(
-            Attr('status').eq('processed') &
+            Attr('status').is_in(['submitted', 'processed']) &
             Attr('sla_breached').eq(False) &
             Attr('sla_deadline').lt(now)
         )

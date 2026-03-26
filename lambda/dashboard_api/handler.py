@@ -20,6 +20,11 @@ def lambda_handler(event, context):
     print(f"Dashboard request: {path}")
 
     try:
+
+        if event.get('requestContext', {}).get('http', {}).get('method') == 'PUT' and path_params.get('id'):
+            result = resolve_ticket(table, path_params['id'])
+            return response(200, result)
+
         if path == '/tickets/stats':
             result = get_stats(table)
         elif path == '/tickets/sla-breaches':
@@ -182,6 +187,45 @@ def clean_item(item):
             cleaned[key] = str(value)
     return cleaned
 
+def resolve_ticket(table, ticket_id):
+    """PUT /tickets/{id}/resolve - mark ticket as resolved."""
+
+    from datetime import datetime, timezone
+
+    # Check if ticket exists
+    result = table.get_item(Key={'ticket_id': ticket_id})
+    item = result.get('Item')
+
+    if not item:
+        return {'error': f'Ticket {ticket_id} not found'}
+
+    if item.get('status') == 'resolved':
+        return {'message': f'Ticket {ticket_id} already resolved'}
+
+    now = datetime.now(timezone.utc).isoformat()
+
+    # Check if resolved within SLA
+    sla_deadline = item.get('sla_deadline', '')
+    resolved_within_sla = now <= sla_deadline if sla_deadline else False
+
+    table.update_item(
+        Key={'ticket_id': ticket_id},
+        UpdateExpression='SET #s = :status, resolved_at = :time, resolved_within_sla = :within_sla',
+        ExpressionAttributeNames={
+            '#s': 'status'
+        },
+        ExpressionAttributeValues={
+            ':status': 'resolved',
+            ':time': now,
+            ':within_sla': resolved_within_sla
+        }
+    )
+
+    return {
+        'message': f'Ticket {ticket_id} resolved',
+        'resolved_at': now,
+        'resolved_within_sla': resolved_within_sla
+    }
 
 def response(status_code, body):
     return {

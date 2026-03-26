@@ -77,6 +77,13 @@ resource "aws_apigatewayv2_route" "get_ticket_by_id" {
   target    = "integrations/${aws_apigatewayv2_integration.dashboard_integration.id}"
 }
 
+# PUT /tickets/{id}/resolve - resolve a ticket
+resource "aws_apigatewayv2_route" "resolve_ticket" {
+  api_id    = aws_apigatewayv2_api.api.id
+  route_key = "PUT /tickets/{id}/resolve"
+  target    = "integrations/${aws_apigatewayv2_integration.dashboard_integration.id}"
+}
+
 resource "aws_lambda_permission" "allow_apigw_dashboard" {
   statement_id  = "AllowAPIGatewayDashboard"
   action        = "lambda:InvokeFunction"

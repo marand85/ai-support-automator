@@ -50,7 +50,7 @@ resource "aws_kinesis_stream" "tickets" {
 resource "aws_iam_role" "firehose_role" {
   name = "${var.project_name}-firehose-role"
   assume_role_policy = jsonencode({
-    Verision = "2012-10-17"
+    Version = "2012-10-17"
     Statement = [{
       Action    = "sts:AssumeRole"
       Effect    = "Allow"
@@ -227,7 +227,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "kinesis:DescribeStream",
           "kinesis:ListShards"
         ]
-        Resource = "aws_kinesis_stream.tickets_arn"
+        Resource = aws_kinesis_stream.tickets.arn
       },
       {
         Effect = "Allow"
